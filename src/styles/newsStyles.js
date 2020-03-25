@@ -30,7 +30,9 @@ export const SubWrapper = styled.div`
 export const FormWrapper = styled.form`
   flex-wrap: wrap;
   display: flex;
-  background: ${props => props.theme.backgroundSecondary} ${mobile} {
-    justify-content: center;
+  background: ${props => props.theme.backgroundSecondary}
+  justify-content: center;
+
+  ${mobile} {
   }
 `;
