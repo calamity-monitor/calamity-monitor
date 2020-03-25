@@ -22,18 +22,20 @@ export default class World_Map extends Component {
         "esri/views/MapView",
         "esri/layers/FeatureLayer",
         "esri/Graphic",
-        "esri/widgets/Legend"
+        "esri/widgets/LayerList",
+        "esri/core/Collection",
+        "esri/widgets/BasemapToggle"
       ],
       {
         css: true
       }
-    ).then(([Map, MapView, FeatureLayer, Graphic, Legend]) => {
+    ).then(([Map, MapView, FeatureLayer, Graphic, LayerList, Collection, BasemapToggle]) => {
+
       //map is the container, all my layers are added to map
       const map = new Map({
         basemap: "dark-gray"
       });
 
-      console.log("Right before graphics:", this.state.countries);
       const graphics = this.state.countries.map(point => {
         return new Graphic({
           attributes: {
@@ -56,6 +58,8 @@ export default class World_Map extends Component {
 
       const featureLayer = new FeatureLayer({
         source: graphics,
+        outFields: ["*"],
+        title: "COVID-19 Cases Globally",
         renderer: {
           type: "simple", // autocasts as new SimpleRenderer()
           symbol: {
@@ -71,10 +75,6 @@ export default class World_Map extends Component {
             {
               type: "size",
               field: "confirmed_cases",
-              legendOptions: {
-                title:
-                  "Data provided by the Johns Hopkins University Center for Systems Science and Engineering (JHU CSSE)"
-              },
               stops: [
                 {
                   value: 0,
@@ -85,26 +85,35 @@ export default class World_Map extends Component {
                   size: "1px"
                 },
                 {
-                  value: 10,
+                  value: 101,
                   size: "5px"
                 },
                 {
-                  value: 100,
+                  value: 1001,
                   size: "10px"
                 },
                 {
-                  value: 1000,
+                  value: 10001,
                   size: "25px"
                 },
                 {
-                  value: 10000,
+                  value: 50001,
                   size: "50px"
+                }
+              ]
+            },
+            {
+              type: "opacity",
+              field: "confirmed_cases",
+              stops: [
+                {
+                  value: 0,
+                  opacity: 0.4
                 }
               ]
             }
           ]
         },
-        title: "COVID-19 Cases Globally",
         popupTemplate: {
           // autocasts as new PopupTemplate()
           title: "COVID-19",
@@ -194,12 +203,116 @@ export default class World_Map extends Component {
         center: [-98, 36],
         zoom: 3
       });
-      this.view.ui.add(
-        new Legend({
-          view: this.view
-        }),
-        "top-right"
-      );
+
+      const layerList = new LayerList({
+        view: this.view,
+        listItemCreatedFunction: createActions
+      });
+      this.view.ui.add(layerList, "top-right");
+
+      const expressions = new Collection([
+        {
+          id: "All",
+          expression: "confirmed_cases > 0"
+        },
+        {
+          id: "50,000+",
+          expression: "confirmed_cases > 50000"
+        },
+        {
+          id: "10,000-50,000",
+          expression: "confirmed_cases > 10000 AND confirmed_cases <= 50000"
+        },
+        {
+          id: "1,000-10,000",
+          expression: "confirmed_cases > 1000 AND confirmed_cases <= 10000"
+        },
+        {
+          id: "100-1,000",
+          expression: "confirmed_cases > 100 AND confirmed_cases <= 1000"
+        },
+        {
+          id: "1-100",
+          expression: "confirmed_cases > 10 AND confirmed_cases <= 100"
+        }
+      ]);
+
+      layerList.on("trigger-action", function(event) {
+        const actionId = event.action.id;
+        const layer = event.item.layer;
+
+        const subExpression = expressions.find(function(item) {
+          return item.id === actionId;
+        }).expression;
+
+        const definitionExpression = createDefinitionExpression(subExpression);
+        layer.definitionExpression = definitionExpression;
+
+        zoomToLayer(layer);
+      });
+
+      function createActions(event) {
+        const item = event.item;
+
+        item.actionsOpen = true;
+        item.actionsSections = [
+          [
+            {
+              title: "All Cases",
+              className: "esri-icon-zoom-out-fixed",
+              id: "All",
+            },
+            {
+              title: "50,000+",
+              className: "esri-icon-zoom-out-fixed",
+              id: "50,000+",
+            },
+            {
+              title: "10,000-50,000",
+              className: "esri-icon-zoom-out-fixed",
+              id: "10,000-50,000",
+            },
+            {
+              title: "1,000-10,000",
+              className: "esri-icon-zoom-out-fixed",
+              id: "1,000-10,000",
+            },
+            {
+              title: "100-1,000",
+              className: "esri-icon-zoom-out-fixed",
+              id: "100-1,000"
+            },
+            {
+              title: "1-100",
+              className: "esri-icon-zoom-out-fixed",
+              id: "1-100"
+            }
+          ],
+        ];
+      }
+
+      function createDefinitionExpression(subExpression) {
+
+
+        return subExpression
+      }
+
+      // Zooms to the extent of the layer as defined by
+      // its definitionExpression
+      // This method will work for all FeatureLayers, even
+      // those without a saved `fullExtent` on the service.
+
+      function zoomToLayer(layer) {
+        return layer.queryExtent().then(function(response) {
+          this.view.goTo(response.extent);
+        });
+      }
+
+      const toggle = new BasemapToggle({
+        view: this.view,
+        nextBasemap: "gray"
+      })
+      this.view.ui.add(toggle, "bottom-right")
     });
   }
 
@@ -212,7 +325,6 @@ export default class World_Map extends Component {
 
   render() {
     return (
-      //<h1>Map.js is rendering</h1>
       <div className="webmap" ref={this.mapRef} />
     );
   }
