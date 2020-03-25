@@ -8,7 +8,7 @@ export const colorsDark = {
 };
 
 export const colorsLight = {
-  background: "#EAEAEA",
+  backgroundColor: "#EAEAEA",
   backgroundSecondary: "#eeeeee",
   titleText: "#333333",
   text: "#424242",

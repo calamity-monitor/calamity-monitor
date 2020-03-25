@@ -11,6 +11,7 @@ import {
   FormControl,
   Select
 } from "@material-ui/core/";
+import { FormWrapper } from "../styles/newsStyles";
 
 class DialogSelect extends Component {
   constructor() {
@@ -41,7 +42,7 @@ class DialogSelect extends Component {
 
   render() {
     return (
-      <div>
+      <>
         <Button color="inherit" onClick={this.handleClickOpen}>
           <FilterListIcon />
         </Button>
@@ -52,7 +53,7 @@ class DialogSelect extends Component {
           onClose={this.handleClose}>
           <DialogTitle style={{ paddingBottom: 0 }}>Filter by: </DialogTitle>
           <DialogContent>
-            <form style={{ display: "flex", flexWrap: "wrap" }}>
+            <FormWrapper>
               <FormControl style={{ margin: 20, minWidth: 120 }}>
                 <InputLabel htmlFor="demo-dialog-native">Country</InputLabel>
                 <Select
@@ -65,8 +66,20 @@ class DialogSelect extends Component {
                     <em>None</em>
                   </MenuItem>
                   <MenuItem value="us">United States</MenuItem>
-                  <MenuItem value="ch">China</MenuItem>
+                  <MenuItem value="cn">China</MenuItem>
                   <MenuItem value="fr">France</MenuItem>
+                  <MenuItem value="ae">United Arab Emirates</MenuItem>
+                  <MenuItem value="ar">Argentina</MenuItem>
+                  <MenuItem value="at">Austria</MenuItem>
+                  <MenuItem value="au">Australia</MenuItem>
+                  <MenuItem value="be">Belgium</MenuItem>
+                  <MenuItem value="br">Brazil</MenuItem>
+                  <MenuItem value="ca">Canada</MenuItem>
+                  <MenuItem value="ch">Switzerland</MenuItem>
+                  <MenuItem value="co">Colombia</MenuItem>
+                  <MenuItem value="cu">Cuba</MenuItem>
+                  <MenuItem value="cz">Czechia</MenuItem>
+                  <MenuItem value="de">Germany</MenuItem>
                 </Select>
               </FormControl>
               <FormControl style={{ margin: 20, minWidth: 120 }}>
@@ -85,7 +98,7 @@ class DialogSelect extends Component {
                   <MenuItem value="health">Health</MenuItem>
                 </Select>
               </FormControl>
-            </form>
+            </FormWrapper>
           </DialogContent>
           <DialogActions>
             <Button onClick={this.handleClose} color="primary">
@@ -96,7 +109,7 @@ class DialogSelect extends Component {
             </Button>
           </DialogActions>
         </Dialog>
-      </div>
+      </>
     );
   }
 }

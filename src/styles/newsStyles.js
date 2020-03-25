@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { tablet } from "./mediaQueries";
+import { tablet, mobile } from "./mediaQueries";
 
 export const Wrapper = styled.div`
   width: 85%;
@@ -25,4 +25,12 @@ export const SubWrapper = styled.div`
   color: ${props => props.theme.titleText};
   display: flex;
   align-items: center;
+`;
+
+export const FormWrapper = styled.form`
+  flex-wrap: wrap;
+  display: flex;
+  background: ${props => props.theme.backgroundSecondary} ${mobile} {
+    justify-content: center;
+  }
 `;
