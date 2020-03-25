@@ -1,8 +1,8 @@
-import React, { Component } from "react";
-import { loadModules } from "esri-loader";
-import { getMapData } from "../services/mapAPIFuncs";
+import React, {Component} from 'react';
+import {loadModules} from 'esri-loader';
+import { getCoordinateData } from '../services/mapAPIFuncs'
 
-export default class Map extends Component {
+export default class World_Map extends Component {
   constructor(props) {
     super(props);
     this.mapRef = React.createRef();
@@ -12,7 +12,8 @@ export default class Map extends Component {
   }
 
   componentDidMount() {
-    getMapData().then(countries => this.setState({ countries }));
+
+    getCoordinateData().then(countries => this.setState({countries}))
 
     // lazy load the required ArcGIS API for JavaScript modules and CSS
     loadModules(

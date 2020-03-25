@@ -1,21 +1,23 @@
 import axios from "axios"
-import { selectCoordinates } from "../utils/utils"
+import { selectCoordinates, selectCounties } from "../utils/utils"
 
 
 
-export const url = 'https://coronavirus-tracker-api.herokuapp.com/v2/locations'
+export const johnHopkinsURL = 'https://coronavirus-tracker-api.herokuapp.com/v2/locations'
 
-export const getMapData = async () => {
+export const csbsURL = 'https://coronavirus-tracker-api.herokuapp.com/v2/locations?source=csbs'
+
+export const getCoordinateData = async () => {
   const {data} = await axios
-    .get(url)
-    const result = data.locations.map(location =>  selectCoordinates(location))
-
-    //.then(({ data }) => data.locations.map(location =>  selectCoordinates(location)))
-
-
-    // console.log("Is the result of getMapData an Array?", Array.isArray(result))
-    // console.log("Result", result)
+    .get(johnHopkinsURL)
+    const result = data.locations.map(location => selectCoordinates(location))
   return result
 }
 
-
+export const getCountyData = async () => {
+  const {data} = await axios
+    .get(csbsURL)
+    const result = data.locations.map(location => selectCounties(location))
+    console.log("csbs result:", result)
+  return result
+}

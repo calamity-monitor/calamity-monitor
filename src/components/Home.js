@@ -1,10 +1,10 @@
 import React from "react";
-import Map from "./Map";
+import World_Map from "./World_Map";
 
 const Home = () => {
   return (
     <div>
-      <Map />
+      <World_Map />
     </div>
   );
 };
